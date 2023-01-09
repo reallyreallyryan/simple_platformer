@@ -1,6 +1,8 @@
 # Initial setup for a platformer game
 # First time working with sprites/image movements
 
+# First Update - Added attack images for the player, doesn't look smooth, but it works
+
 import pygame
 import spritesheet
 
@@ -15,10 +17,6 @@ background_color = (150, 250, 250)
 VEL = 5
 clock = pygame.time.Clock()
 
-# Player Starting Coordinates 
-x = 50
-y = 450
-
 rectX = 50
 rectY = 65
 
@@ -31,14 +29,16 @@ bg = pygame.image.load("assets/background.jpg")
 floor_image = pygame.image.load("assets/floor.png")
 floor_image = pygame.transform.scale(floor_image, (width, 100) )
 
-# Player Image
+# Player Images
 walkRight =[pygame.image.load("assets/run1.png"), pygame.image.load("assets/run2.png"), pygame.image.load("assets/run3.png"), pygame.image.load("assets/run4.png")]
 walkLeft = [pygame.image.load("assets/left_run1.png"), pygame.image.load("assets/left_run2.png"), pygame.image.load("assets/left_run3.png"), pygame.image.load("assets/left_run4.png")]
 jump = pygame.image.load("assets/jump1.png")
-
+attack = [pygame.image.load("assets/attack_6.png"), pygame.image.load("assets/attack_5.png"), pygame.image.load("assets/attack_4.png"), pygame.image.load("assets/attack_3.png")]
 player_image = pygame.image.load("assets/lady.png")
 
-
+x = 50
+y = 450
+isAttack = False
 isJump = False
 jumpCount = 7 
 left = False
@@ -62,6 +62,11 @@ def redrawGameWindow():
         walkCount += 1
     elif isJump:
         screen.blit(jump, (x,y))
+        walkCount +=1
+    elif isAttack:
+        screen.blit(attack[walkCount//4], (x,y))
+        walkCount += 1
+
     else:
         screen.blit(player_image, (x, y))
 
@@ -73,8 +78,6 @@ run = True
 while run == True:
     clock.tick(FPS)
     # Paint Images on Screen
-
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT: 
@@ -99,9 +102,12 @@ while run == True:
         x -= VEL
         left = True
         right = False
+    elif keys[pygame.K_w]:
+        isAttack = True
     else:
         right = False
         left = False
+        isAttack = False
         walkCount = 0 
 
     # Jump Physics
@@ -111,9 +117,10 @@ while run == True:
             right = False
             left = False
             walkCount =  0
+    
 
     else: 
-        if jumpCount >= -7:
+        if jumpCount >= -7: 
             neg = 1
             if jumpCount < 0:
                 neg = -1
